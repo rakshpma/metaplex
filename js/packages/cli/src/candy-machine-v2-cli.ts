@@ -9,7 +9,6 @@ import {
   fromUTF8Array,
   getCandyMachineV2Config,
   parsePrice,
-  shuffle,
 } from './helpers/various';
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import {
@@ -33,14 +32,17 @@ import { loadCache, saveCache } from './helpers/cache';
 import { mintV2 } from './commands/mint';
 import { signMetadata } from './commands/sign';
 import {
-  getAccountsByCreatorAddress,
+  getAddressesByCreatorAddress,
   signAllMetadataFromCandyMachine,
 } from './commands/signAll';
+import { getOwnersByMintAddresses } from './commands/owners';
 import log from 'loglevel';
 import { withdrawV2 } from './commands/withdraw';
 import { updateFromCache } from './commands/updateFromCache';
 import { StorageType } from './helpers/storage-type';
 import { getType } from 'mime';
+import { withdraw_bundlr } from './helpers/upload/arweave-bundle';
+
 program.version('0.0.2');
 const supportedImageTypes = {
   'image/png': 1,
@@ -72,6 +74,14 @@ function myParseInt(value) {
   return parsedValue;
 }
 
+programCommand('version', { requireWallet: false }).action(async () => {
+  const revision = require('child_process')
+    .execSync('git rev-parse HEAD')
+    .toString()
+    .trim();
+  log.info(`Candy Machine Version: ${revision}`);
+});
+
 programCommand('upload')
   .argument(
     '<directory>',
@@ -90,7 +100,7 @@ programCommand('upload')
   )
   .option(
     '-rl, --rate-limit <number>',
-    'max number of requests per second',
+    'max number of concurrent requests for the write indices command',
     myParseInt,
     5,
   )
@@ -124,8 +134,9 @@ programCommand('upload')
     } = await getCandyMachineV2Config(walletKeyPair, anchorProgram, configPath);
 
     if (storage === StorageType.ArweaveSol && env !== 'mainnet-beta') {
-      throw new Error(
-        'The arweave-sol storage option only works on mainnet. For devnet, please use either arweave, aws or ipfs\n',
+      log.info(
+        '\x1b[31m%s\x1b[0m',
+        'WARNING: On Devnet, the arweave-sol storage option only stores your files for 1 week. Please upload via Mainnet Beta for your final collection.\n',
       );
     }
 
@@ -442,6 +453,12 @@ programCommand('withdraw_all')
       );
     }
   });
+
+programCommand('withdraw_bundlr').action(async (_, cmd) => {
+  const { keypair } = cmd.opts();
+  const walletKeyPair = loadWalletKey(keypair);
+  await withdraw_bundlr(walletKeyPair);
+});
 
 program
   .command('verify_assets')
@@ -974,46 +991,6 @@ programCommand('update_existing_nfts_from_latest_cache_file')
     );
   });
 
-// can then upload these
-programCommand('randomize_unminted_nfts_in_new_cache_file').action(
-  async (directory, cmd) => {
-    const { keypair, env, cacheName } = cmd.opts();
-    const cacheContent = loadCache(cacheName, env);
-    const walletKeyPair = loadWalletKey(keypair);
-    const anchorProgram = await loadCandyProgramV2(walletKeyPair, env);
-    const candyAddress = cacheContent.program.candyMachine;
-
-    log.debug('Creator pubkey: ', walletKeyPair.publicKey.toBase58());
-    log.debug('Environment: ', env);
-    log.debug('Candy machine address: ', candyAddress);
-
-    const candyMachine = await anchorProgram.account.candyMachine.fetch(
-      candyAddress,
-    );
-
-    const itemsRedeemed = candyMachine.itemsRedeemed;
-    log.info('Randomizing one later than', itemsRedeemed.toNumber());
-    const keys = Object.keys(cacheContent.items).filter(
-      k => parseInt(k) > itemsRedeemed,
-    );
-    const shuffledKeys = shuffle(keys.slice());
-    const newItems = {};
-    for (let i = 0; i < keys.length; i++) {
-      newItems[keys[i].toString()] =
-        cacheContent.items[shuffledKeys[i].toString()];
-      log.debug('Setting ', keys[i], 'to ', shuffledKeys[i]);
-      newItems[keys[i].toString()].onChain = false;
-    }
-    fs.writeFileSync(
-      '.cache/' + env + '-' + cacheName + '-randomized',
-      JSON.stringify({
-        ...cacheContent,
-        items: { ...cacheContent.items, ...newItems },
-      }),
-    );
-  },
-);
-
 programCommand('get_all_mint_addresses').action(async (directory, cmd) => {
   const { env, cacheName, keypair } = cmd.opts();
 
@@ -1026,28 +1003,64 @@ programCommand('get_all_mint_addresses').action(async (directory, cmd) => {
     candyMachineId,
   );
 
-  const accountsByCreatorAddress = await getAccountsByCreatorAddress(
+  log.info('Getting mint addresses...');
+  const addresses = await getAddressesByCreatorAddress(
     candyMachineAddr.toBase58(),
     anchorProgram.provider.connection,
   );
-  const addresses = accountsByCreatorAddress.map(it => {
-    return new PublicKey(it[0].mint).toBase58();
-  });
-
-  console.log(JSON.stringify(addresses, null, 2));
+  fs.writeFileSync('./mint-addresses.json', JSON.stringify(addresses, null, 2));
+  log.info('Successfully saved mint addresses to ./mint-addresses.json');
 });
 
-function programCommand(name: string) {
-  return program
+programCommand('get_all_owners_addresses').action(async (directory, cmd) => {
+  const { env, cacheName, keypair } = cmd.opts();
+
+  const cacheContent = loadCache(cacheName, env);
+  const walletKeyPair = loadWalletKey(keypair);
+  const anchorProgram = await loadCandyProgramV2(walletKeyPair, env);
+
+  const candyMachineId = new PublicKey(cacheContent.program.candyMachine);
+  const [candyMachineAddr] = await deriveCandyMachineV2ProgramAddress(
+    candyMachineId,
+  );
+
+  log.info('Getting mint addresses...');
+  const addresses = await getAddressesByCreatorAddress(
+    candyMachineAddr.toBase58(),
+    anchorProgram.provider.connection,
+  );
+
+  log.info('Getting owner addresses...');
+  const owners = await getOwnersByMintAddresses(
+    addresses,
+    anchorProgram.provider.connection,
+  );
+  fs.writeFileSync('./owner-addresses.json', JSON.stringify(owners, null, 2));
+  log.info('Successfully saved owner addresses to ./owner-addresses.json');
+});
+
+function programCommand(
+  name: string,
+  options: { requireWallet: boolean } = { requireWallet: true },
+) {
+  let cmProgram = program
     .command(name)
     .option(
       '-e, --env <string>',
       'Solana cluster env name',
       'devnet', //mainnet-beta, testnet, devnet
     )
-    .requiredOption('-k, --keypair <path>', `Solana wallet location`)
     .option('-l, --log-level <string>', 'log level', setLogLevel)
     .option('-c, --cache-name <string>', 'Cache file name', 'temp');
+
+  if (options.requireWallet) {
+    cmProgram = cmProgram.requiredOption(
+      '-k, --keypair <path>',
+      `Solana wallet location`,
+    );
+  }
+
+  return cmProgram;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

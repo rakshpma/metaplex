@@ -62,10 +62,10 @@ SRC_DIR=$PARENT_DIR/src
 CMD_CMV2="ts-node ${SRC_DIR}/candy-machine-v2-cli.ts"
 
 # Remote files to test the upload
-PNG="https://rm5fm2cz5z4kww2gbyjwhyfekgcc3qjmz43cw53g6qhwhgcofoyq.arweave.net/izpWaFnueKtbRg4TY-CkUYQtwSzPNit3ZvQPY5hOK7E/?ext=png"
-GIF="https://3shhjbznlupbi4gldnfdzpvulcexrek5fovdtzpo37bxde6au5va.arweave.net/3I50hy1dHhRwyxtKPL60WIl4kV0rqjnl7t_DcZPAp2o/?ext=gif"
-JPG="https://7cvkvtes5uh4h3ud42bi3nl2ivtmnbpqppqmau7pk2p2qykkmbya.arweave.net/-KqqzJLtD8Pug-aCjbV6RWbGhfB74MBT71afqGFKYHA/?ext=jpg"
-MP4="https://sdhj7rx52ch7dhe7znokxv2u6mffsalrzuiwxrd5liekkettqpdq.arweave.net/kM6fxv3Qj_Gcn8tcq9dU8wpZAXHNEWvEfVoIpRJzg8c/?ext=mp4"
+PNG="https://arweave.net/izpWaFnueKtbRg4TY-CkUYQtwSzPNit3ZvQPY5hOK7E/?ext=png"
+GIF="https://arweave.net/3I50hy1dHhRwyxtKPL60WIl4kV0rqjnl7t_DcZPAp2o/?ext=gif"
+JPG="https://arweave.net/-KqqzJLtD8Pug-aCjbV6RWbGhfB74MBT71afqGFKYHA/?ext=jpg"
+MP4="https://arweave.net/kM6fxv3Qj_Gcn8tcq9dU8wpZAXHNEWvEfVoIpRJzg8c/?ext=mp4"
 
 blu ""
 blu "Candy Machine CLI - Automated Test"
@@ -321,7 +321,7 @@ EOM
 if [ ! -d $ASSETS_DIR ]; then
     mkdir $ASSETS_DIR
     if [ "$ANIMATION" -eq 1 ]; then
-        curl -s $MP4 >"$ASSETS_DIR/template_animation.mp4"
+        curl -L -s $MP4 >"$ASSETS_DIR/template_animation.mp4"
         SIZE=$(wc -c "$ASSETS_DIR/template_animation.mp4" | grep -oE '[0-9]+' | head -n 1)
 
         if [ $SIZE -eq 0 ]; then
@@ -329,7 +329,7 @@ if [ ! -d $ASSETS_DIR ]; then
             exit 1
         fi
     fi
-    curl -s $IMAGE >"$ASSETS_DIR/template_image.$EXT"
+    curl -L -s $IMAGE >"$ASSETS_DIR/template_image.$EXT"
     SIZE=$(wc -c "$ASSETS_DIR/template_image.$EXT" | grep -oE '[0-9]+' | head -n 1)
 
     if [ $SIZE -eq 0 ]; then

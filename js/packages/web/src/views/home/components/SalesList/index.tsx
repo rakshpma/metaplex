@@ -10,6 +10,7 @@ import { HowToBuyModal } from '../../../../components/HowToBuyModal';
 
 import { useAuctionsList } from './hooks/useAuctionsList';
 import { AuctionRenderCard } from '../../../../components/AuctionRenderCard';
+import { BannerMetaplex } from '../../../../components/BannerMetaplex';
 
 const { TabPane } = Tabs;
 const { Content } = Layout;
@@ -42,7 +43,7 @@ export const SalesListView = (props: { collectionMintFilter?: string }) => {
   return (
     <>
       {!props.collectionMintFilter && (
-        <Banner
+        <BannerMetaplex
           src="/main-banner.svg"
           headingText="The amazing world of Metaplex."
           subHeadingText="Buy exclusive Metaplex NFTs."

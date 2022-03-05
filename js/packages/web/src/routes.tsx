@@ -19,6 +19,8 @@ import { PackCreateView } from './views/packCreate';
 import { BillingView } from './views/auction/billing';
 import { CollectionsView } from './views/collections';
 import { CollectionDetailView } from './views/collections/collectionDetail';
+import { HomeViewMetaplex } from './views/home-metaplex';
+import { AuctionViewMetaplex } from './views/auction-metaplex';
 
 export function Routes() {
   const shouldEnableNftPacks = process.env.NEXT_ENABLE_NFT_PACKS === 'true';
@@ -73,6 +75,11 @@ export function Routes() {
             />
             <Route
               exact
+              path="/auctionMetaplex/:id"
+              component={() => <AuctionViewMetaplex />}
+            />
+            <Route
+              exact
               path="/auction/:id/billing"
               component={() => <BillingView />}
             />
@@ -82,7 +89,7 @@ export function Routes() {
               path="/collection/:id"
               component={() => <CollectionDetailView />}
             />
-            <Route path="/" component={() => <HomeView />} />
+            <Route path="/" component={() => <HomeViewMetaplex />} />
           </Switch>
         </Providers>
       </HashRouter>

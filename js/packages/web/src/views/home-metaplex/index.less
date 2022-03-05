@@ -1,0 +1,119 @@
+.box {
+  position: relative;
+  overflow: hidden;
+  width: 573px;
+  height: 415px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #a8abb3;
+  border-radius: 10px;
+}
+
+iframe {
+  border-radius: 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+/*#ytvideoControl source
+{
+height: 600px;
+}  
+*/
+
+/* #ytvideoControl {
+perspective: 1000px;
+}*/
+#ytvideoControl {
+  /*transform: rotateY(-30deg);*/
+  -ms-transform: scaleY(1.5); /* IE 9 */
+  transform: scaleY(1.5);
+}
+video#ytvideoControl {
+  object-fit: fill;
+}
+
+/* #box-cover-mobile { 
+  background: url('imgg/thumb-bg-img.png') no-repeat center center fixed;
+  background-size: cover;
+  background-attachment:scroll !important;
+}*/
+
+#box-cover-mobile {
+  background-image: url(imgg/thumb-bg-img.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  -o-background-size: cover;
+  -moz-background-size: cover;
+  -webkit-background-size: cover;
+}
+
+#marketplace .yeah {
+  margin-top: -26vw;
+}
+#marketplace .top-center {
+  position: absolute;
+  top: 0vh !important;
+  height: 100vh;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 100%;
+  place-items: center;
+}
+@media only screen and (min-width: 320px) and (max-width: 767px) {
+  #marketplace .yeah {
+    margin-top: -85vw;
+  }
+  .top-center p {
+    font-size: 17.0052px;
+    line-height: 16px;
+    margin-top: -85vh;
+  }
+  #marketplace .top-center {
+    top: 2vh !important;
+  }
+  .tab-view {
+    display: none;
+  }
+  .tabs-section input.nosubmit {
+    width: 100%;
+  }
+}
+.tab-view {
+  display: none;
+}
+
+/* Media Query for Tablets Ipads portrait mode */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .tab-view {
+    display: block;
+  }
+  .no-mobile {
+    display: none;
+  }
+  mobile {
+    display: none;
+  }
+  .refreshbtn {
+    display: none;
+  }
+  .tabcontent > .dudes {
+    display: grid;
+    grid-template-columns: 100%;
+    row-gap: 20px;
+    padding-bottom: 0;
+  }
+  .tabs-section input.nosubmit {
+    width: 100%;
+  }
+  #marketplace .top-center {
+    top: 6vh !important;
+  }
+}

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Layout, Tabs } from 'antd';
 import { Button, Card, Carousel, Col, List, Row, Skeleton } from 'antd';
 import { AuctionCard } from '../../components/AuctionCard';
 import { Connection } from '@solana/web3.js';
@@ -41,7 +42,7 @@ import { AmountLabel } from '../../components/AmountLabel';
 import { ClickToCopy } from '../../components/ClickToCopy';
 import { useTokenList } from '../../contexts/tokenList';
 
-export const AuctionItem = ({
+export const AuctionItemMetaplex = ({
   item,
   index,
   size,
@@ -80,7 +81,7 @@ export const AuctionItem = ({
   );
 };
 
-export const AuctionView = () => {
+export const AuctionViewMetaplex = () => {
   const { width } = useWindowDimensions();
   const { id } = useParams<{ id: string }>();
   const { endpoint } = useConnectionConfig();
@@ -129,7 +130,7 @@ export const AuctionView = () => {
     }
 
     return (
-      <AuctionItem
+      <AuctionItemMetaplex
         key={item.metadata.pubkey}
         item={item}
         index={index}
@@ -649,46 +650,49 @@ export const AuctionBids = ({
   if (!auctionView || bids.length < 1) return null;
 
   return (
-    <Row>
-      <Col className="bids-lists">
-        <h6 className={'info-title'}>
-          {auctionView.isInstantSale ? 'Sale' : 'Bid'} History
-        </h6>
-        {bidLines.slice(0, 10)}
-        {bids.length > 10 && (
-          <div
-            className="full-history"
-            onClick={() => setShowHistoryModal(true)}
-            style={{
-              cursor: 'pointer',
+    <>
+      <Layout></Layout>
+      <Row>
+        <Col className="bids-lists">
+          <h6 className={'info-title'}>
+            {auctionView.isInstantSale ? 'Sale' : 'Bid'} History
+          </h6>
+          {bidLines.slice(0, 10)}
+          {bids.length > 10 && (
+            <div
+              className="full-history"
+              onClick={() => setShowHistoryModal(true)}
+              style={{
+                cursor: 'pointer',
+              }}
+            >
+              View full history
+            </div>
+          )}
+          <MetaplexModal
+            visible={showHistoryModal}
+            onCancel={() => setShowHistoryModal(false)}
+            title="Bid history"
+            bodyStyle={{
+              background: 'unset',
+              boxShadow: 'unset',
+              borderRadius: 0,
             }}
+            centered
+            width={width < 768 ? width - 10 : 600}
           >
-            View full history
-          </div>
-        )}
-        <MetaplexModal
-          visible={showHistoryModal}
-          onCancel={() => setShowHistoryModal(false)}
-          title="Bid history"
-          bodyStyle={{
-            background: 'unset',
-            boxShadow: 'unset',
-            borderRadius: 0,
-          }}
-          centered
-          width={width < 768 ? width - 10 : 600}
-        >
-          <div
-            style={{
-              maxHeight: 600,
-              overflowY: 'scroll',
-              width: '100%',
-            }}
-          >
-            {bidLines}
-          </div>
-        </MetaplexModal>
-      </Col>
-    </Row>
+            <div
+              style={{
+                maxHeight: 600,
+                overflowY: 'scroll',
+                width: '100%',
+              }}
+            >
+              {bidLines}
+            </div>
+          </MetaplexModal>
+        </Col>
+      </Row>
+    </>
   );
 };

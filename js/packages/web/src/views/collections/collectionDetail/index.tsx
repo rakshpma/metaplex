@@ -8,6 +8,7 @@ import { SalesListView } from '../../home/components/SalesList';
 export const CollectionDetailView = () => {
   const { id } = useParams<{ id: string }>();
   const key = pubkeyToString(id);
+  console.log('key', key);
   const { metadataByCollection } = useMeta();
   const pubkey = useMemo(
     () => metadataByCollection[key].pubkey,

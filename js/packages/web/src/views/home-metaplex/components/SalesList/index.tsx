@@ -42,7 +42,7 @@ export const SalesListView = (props: { collectionMintFilter?: string }) => {
 
   return (
     <>
-      <Layout>
+      {/* <Layout>
         <Content style={{ display: 'flex', flexWrap: 'wrap' }}>
           {false ? (
             <Col style={{ width: '100%', marginTop: 32 }}>
@@ -91,7 +91,7 @@ export const SalesListView = (props: { collectionMintFilter?: string }) => {
             ''
           )}
         </Content>
-      </Layout>
+      </Layout> */}
       <div id="Items" className="tabcontent">
         <div className="dudes">
           <button type="button" className="refreshbtn">

@@ -59,21 +59,21 @@ export const AppLayout = React.memo(function AppLayoutImpl(props: any) {
               data-scroll
               data-scroll-sticky
               data-scroll-target="body"
+              style={{ gridTemplateColumns: '100%' }}
             >
-              <div className="left no-mobile">
-                {/* <p><a href="https://drive.google.com/file/d/1cpx76F_F9buWIr_3L8jrEXZfyhTs5PlY/view" target="_blank" style="color:white;text-decoration: none;">WHITEPAPER</a></p> */}
-                <p>TEAM</p>
-                {/* <p><a href="landsale.html" target="_blank" style="color:white;text-decoration: none;">LAND SALE</a></p>
-            <p><a href="marketplace.html" target="_blank" style="color:white;text-decoration: none;">MARKETPLACE</a></p> */}
+              <div className="no-mobile" style={{ width: '100%' }}>
+                <Header className="App-Bar">
+                  <AppBar />
+                </Header>
               </div>
-              <div className="logo">
+              {/* <div className="logo">
                 <img src="./images/logo.png" alt="" />
-              </div>
-              <div className="right no-mobile">
+              </div> */}
+              {/* <div className="right no-mobile">
                 <img src="./imgg/twitter.svg" alt="" />
                 <img src="./imgg/instagram.svg" alt="" />
                 <img src="./imgg/telegram.svg" alt="" />
-              </div>
+              </div> */}
             </div>
             <div
               className="burger mobile"
@@ -148,8 +148,8 @@ export const AppLayout = React.memo(function AppLayoutImpl(props: any) {
         <span id={'static-header-gradient'}></span>
         <span id={'static-end-gradient'}></span> */}
                   {/* <Header className="App-Bar">
-          <AppBar />
-        </Header> */}
+                    <AppBar />
+                  </Header> */}
                   {/* <Layout id={'width-layout'}> */}
                   <Content
                   // style={{

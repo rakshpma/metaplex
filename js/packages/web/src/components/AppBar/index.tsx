@@ -125,9 +125,10 @@ export const AppBar = () => {
       <MobileNavbar />
       <div id="desktop-navbar">
         <div className="app-left">
-          <LogoLink />
-          &nbsp;&nbsp;&nbsp;
           <MetaplexMenu />
+        </div>
+        <div className="logo">
+          <img src="images/logo.png" alt="" />
         </div>
         <div className="app-right">
           {!connected && (

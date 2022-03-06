@@ -275,6 +275,96 @@ export const AuctionViewMetaplex = () => {
   } else {
     return (
       <div>
+        {/* <div className="yeah" id="content-landsale"> */}
+        <div className="left-line liner">
+          <div className="block left-block"></div>
+        </div>
+        <div className="yeah-overlay1"></div>
+        <div className="content-container">
+          <section className="checkout-section">
+            <div className="checkout-content">
+              <div className="dudes">
+                <button type="button" className="backbtn">
+                  <img src="./imgg/backbtn.png" alt="" />
+                </button>
+                <div className="checkout-head">
+                  <p>
+                    NFT <span>CHECKOUT</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="checkout-box">
+              <div className="dudes">
+                <div className="checkout-img line">
+                  <Carousel
+                    autoplay={false}
+                    afterChange={index => setCurrentIndex(index)}
+                  >
+                    {items}
+                  </Carousel>
+
+                  <div className="checkout-details">
+                    <h1>{art.title || <Skeleton paragraph={{ rows: 0 }} />}</h1>
+                    <ul>
+                      {attributes &&
+                        attributes.map((attribute, index) => (
+                          <li>
+                            {attribute.trait_type} : {attribute.value}
+                          </li>
+                        ))}
+                    </ul>
+                    <p>
+                      {description ||
+                        (winnerCount !== undefined && (
+                          <div style={{ fontStyle: 'italic' }}>
+                            No description provided.
+                          </div>
+                        ))}
+                    </p>
+                    <p className="pb0"></p>
+                    <AuctionBids auctionView={auction} />
+                  </div>
+                </div>
+                <div className="checkout-details">
+                  <div className="token-claim-dude">
+                    <div>
+                      <p className="wallet-head">Select a wallet to proceed</p>
+                      <button>
+                        <span>
+                          <img src="imgg/phantom.png" /> Phantom Wallet
+                        </span>
+                      </button>
+                      <button>
+                        <span>
+                          <img src="imgg/sollet.png" /> Sollet
+                        </span>
+                      </button>
+                      <button>
+                        <span>
+                          <img src="imgg/solflare.png" /> Solflare
+                        </span>
+                      </button>
+                      <p className="para">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                        sed do eiusmod tempor incididunt ut labore et
+                      </p>
+                      <button className="watch-video">
+                        <img src="imgg/video.png" />
+                        &nbsp;<span>Watch Video</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div className="right-line liner">
+          <div className="block right-block"></div>
+        </div>
+        {/* </div> */}
+
         <Row justify="center" ref={ref} gutter={[48, 0]}>
           <Col span={24} md={10} className={'img-cont-500'}>
             <div className="auction-view" style={{ minHeight: 300 }}>
@@ -520,85 +610,87 @@ const BidLine = (props: {
     );
   } else {
     return (
-      <Row className={'bid-history'}>
-        {isCancelled && (
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              width: '100%',
-              height: 1,
-              background: 'grey',
-              top: 'calc(50% - 1px)',
-              zIndex: 2,
-            }}
-          />
-        )}
-        <Col span={8}>
-          {!isCancelled && (
-            <div className={'flex '}>
-              {isme && (
-                <>
-                  <CheckOutlined />
-                  &nbsp;
-                </>
-              )}
-              <AmountLabel
-                style={{ marginBottom: 0, fontSize: '16px' }}
-                containerStyle={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}
-                displaySymbol={tokenInfo?.symbol || 'CUSTOM'}
-                tokenInfo={tokenInfo}
-                iconSize={24}
-                amount={formatTokenAmount(bid.info.lastBid, mint)}
-              />
-            </div>
-          )}
-        </Col>
-        <Col span={8} style={{ opacity: 0.7 }}>
-          {/* uses milliseconds */}
-          {format(bid.info.lastBidTimestamp.toNumber() * 1000)}
-        </Col>
-        <Col span={8}>
-          <div className={'flex-right'}>
-            <Identicon
+      <>
+        <Row className={'bid-history'}>
+          {isCancelled && (
+            <div
               style={{
-                width: 24,
-                height: 24,
-                marginRight: 10,
-                marginTop: 2,
+                position: 'absolute',
+                left: 0,
+                width: '100%',
+                height: 1,
+                background: 'grey',
+                top: 'calc(50% - 1px)',
+                zIndex: 2,
               }}
-              address={bidder}
-            />{' '}
-            <span style={{ opacity: 0.7 }}>
-              {bidderTwitterHandle ? (
-                <Row className="pubkey-row">
-                  <a
-                    target="_blank"
-                    title={shortenAddress(bidder)}
-                    href={`https://twitter.com/${bidderTwitterHandle}`}
-                    rel="noreferrer"
-                  >{`@${bidderTwitterHandle}`}</a>
-                  <ClickToCopy
-                    className="copy-pubkey"
-                    copyText={bidder as string}
-                  />
-                </Row>
-              ) : (
-                <Row className="pubkey-row">
-                  {shortenAddress(bidder)}
-                  <ClickToCopy
-                    className="copy-pubkey"
-                    copyText={bidder as string}
-                  />
-                </Row>
-              )}
-            </span>
-          </div>
-        </Col>
-      </Row>
+            />
+          )}
+          <Col span={10}>
+            {!isCancelled && (
+              <div className={'flex '}>
+                {isme && (
+                  <>
+                    <CheckOutlined />
+                    &nbsp;
+                  </>
+                )}
+                <AmountLabel
+                  style={{ marginBottom: 0, fontSize: '16px' }}
+                  containerStyle={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                  displaySymbol={tokenInfo?.symbol || 'CUSTOM'}
+                  tokenInfo={tokenInfo}
+                  iconSize={24}
+                  amount={formatTokenAmount(bid.info.lastBid, mint)}
+                />
+              </div>
+            )}
+          </Col>
+          <Col span={6} style={{ opacity: 0.7 }}>
+            {/* uses milliseconds */}
+            {format(bid.info.lastBidTimestamp.toNumber() * 1000)}
+          </Col>
+          <Col span={8}>
+            <div className={'flex-right'}>
+              <Identicon
+                style={{
+                  width: 16,
+                  height: 16,
+                  marginRight: 4,
+                  marginTop: 2,
+                }}
+                address={bidder}
+              />{' '}
+              <span style={{ opacity: 0.7 }}>
+                {bidderTwitterHandle ? (
+                  <Row className="pubkey-row">
+                    <a
+                      target="_blank"
+                      title={shortenAddress(bidder)}
+                      href={`https://twitter.com/${bidderTwitterHandle}`}
+                      rel="noreferrer"
+                    >{`@${bidderTwitterHandle}`}</a>
+                    <ClickToCopy
+                      className="copy-pubkey"
+                      copyText={bidder as string}
+                    />
+                  </Row>
+                ) : (
+                  <Row className="pubkey-row">
+                    {shortenAddress(bidder)}
+                    <ClickToCopy
+                      className="copy-pubkey"
+                      copyText={bidder as string}
+                    />
+                  </Row>
+                )}
+              </span>
+            </div>
+          </Col>
+        </Row>
+      </>
     );
   }
 };

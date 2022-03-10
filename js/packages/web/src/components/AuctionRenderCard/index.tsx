@@ -28,6 +28,7 @@ export const AuctionRenderCard = (props: AuctionCard) => {
   const { ref, data } = useExtendedArt(auction?.thumbnail.metadata.pubkey);
   const hasDescription = data === undefined || data.description === undefined;
   const description = data?.description;
+  const attributes = data?.attributes;
   console.log('description', { description });
   const creators = useCreators(auctionView);
   const name = art?.title || ' ';
@@ -54,9 +55,12 @@ export const AuctionRenderCard = (props: AuctionCard) => {
       <div className="nft-details">
         <h1>{name}</h1>
         <ul>
-          <li>Exhibitions</li>
-          <li>Movies</li>
-          <li>Events</li>
+          {attributes &&
+            attributes.map((attribute, index) => (
+              <li>
+                {attribute.trait_type} : {attribute.value}
+              </li>
+            ))}
         </ul>
         <p>
           {description || (

@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Button, Card, Carousel, Col, List, Row, Skeleton } from 'antd';
-import { AuctionCard } from '../../components/AuctionCard';
+import { Link, useParams } from 'react-router-dom';
+import { Carousel, Col, Row, Skeleton } from 'antd';
 import { Connection } from '@solana/web3.js';
 import { AuctionViewItem } from '@oyster/common/dist/lib/models/metaplex/index';
 import {
@@ -40,6 +39,7 @@ import { MetaAvatar, MetaAvatarDetailed } from '../../components/MetaAvatar';
 import { AmountLabel } from '../../components/AmountLabel';
 import { ClickToCopy } from '../../components/ClickToCopy';
 import { useTokenList } from '../../contexts/tokenList';
+import { AuctionCardMetaplex } from '../../components/AuctionCardMetaplex';
 
 export const AuctionItem = ({
   item,
@@ -139,382 +139,87 @@ export const AuctionViewMetaplex = () => {
     );
   });
 
-  if (width < 768) {
-    return (
-      <Row
-        justify="center"
-        gutter={[48, 0]}
-        className="auction-mobile-container"
-      >
-        <Col span={24} className={'img-cont-500'}>
-          <div className="auction-view" style={{ minHeight: 300 }}>
-            <Carousel
-              autoplay={false}
-              afterChange={index => setCurrentIndex(index)}
-            >
-              {items}
-            </Carousel>
-          </div>
-        </Col>
-        <Col className="auction-mobile-section">
-          <h2 className="art-title">
-            {art.title || <Skeleton paragraph={{ rows: 0 }} />}
-          </h2>
-
-          <div className="info-container">
-            <div className={'info-component'}>
-              <h6 className={'info-title'}>Edition</h6>
-              <span>
-                {(auction?.items.length || 0) > 1 ? 'Multiple' : edition}
-              </span>
-            </div>
-            <div className={'info-component'}>
-              <h6 className={'info-title'}>Winners</h6>
-              <span>
-                {winnerCount === undefined ? (
-                  <Skeleton paragraph={{ rows: 0 }} />
-                ) : isOpen ? (
-                  'Unlimited'
-                ) : (
-                  winnerCount
-                )}
-              </span>
-            </div>
-            <div className={'info-component'}>
-              <h6 className={'info-title'}>NFTS</h6>
-              <span>
-                {nftCount === undefined ? (
-                  <Skeleton paragraph={{ rows: 0 }} />
-                ) : isOpen ? (
-                  'Open'
-                ) : (
-                  nftCount
-                )}
-              </span>
-            </div>
-          </div>
-        </Col>
-
-        <Col className="auction-mobile-section" span={24}>
-          {!auction && <Skeleton paragraph={{ rows: 6 }} />}
-          {auction && (
-            <AuctionCard auctionView={auction} hideDefaultAction={false} />
-          )}
-        </Col>
-        <Col className="auction-mobile-section" span={24}>
-          <h6 className={'info-title'}>Details</h6>
-          <div className="description">
-            <p className={'about-nft-collection a-description'}>
-              {hasDescription && <Skeleton paragraph={{ rows: 3 }} />}
-              {description ||
-                (winnerCount !== undefined && (
-                  <div style={{ fontStyle: 'italic' }}>
-                    No description provided.
-                  </div>
-                ))}
-            </p>
-          </div>
-        </Col>
-        {attributes && (
-          <Col
-            className="auction-mobile-section about-nft-collection a-attributes"
-            span={24}
-          >
-            <h6>Attributes</h6>
-            <List grid={{ column: 4 }}>
-              {attributes.map((attribute, index) => (
-                <List.Item key={`${attribute.value}-${index}`}>
-                  <Card title={attribute.trait_type}>{attribute.value}</Card>
-                </List.Item>
-              ))}
-            </List>
-          </Col>
-        )}
-        <Col className="auction-mobile-section" span={24}>
-          <div className={'info-view'}>
-            <h6 className={'info-title'}>Artists</h6>
-            <div style={{ display: 'flex' }}>
-              <MetaAvatarDetailed creators={creators} />
-            </div>
-          </div>
-        </Col>
-        <Col className="auction-mobile-section" span={24}>
-          <div className={'info-view'}>
-            <h6 className={'info-title'}>View on</h6>
-            <div style={{ display: 'flex' }}>
-              <Button
-                className="tag"
-                onClick={() => window.open(art.uri || '', '_blank')}
-              >
-                Arweave
-              </Button>
-              <Button
-                className="tag"
-                onClick={() => {
-                  const cluster = endpoint.name;
-                  const explorerURL = new URL(
-                    `account/${art?.mint || ''}`,
-                    'https://explorer.solana.com',
-                  );
-                  if (!cluster.includes('mainnet')) {
-                    explorerURL.searchParams.set('cluster', cluster);
-                  }
-                  window.open(explorerURL.href, '_blank');
-                }}
-              >
-                Solana
-              </Button>
-            </div>
-          </div>
-        </Col>
-        <Col className="auction-mobile-section" span={24}>
-          <AuctionBids auctionView={auction} />
-        </Col>
-      </Row>
-    );
-  } else {
-    return (
-      <div>
-        {/* <div className="yeah" id="content-landsale"> */}
-        <div className="left-line liner">
-          <div className="block left-block"></div>
-        </div>
-        <div className="yeah-overlay1"></div>
-        <div className="content-container">
-          <section className="checkout-section">
-            <div className="checkout-content">
-              <div className="dudes">
+  return (
+    <div ref={ref}>
+      <div className="left-line liner">
+        <div className="block left-block"></div>
+      </div>
+      <div className="yeah-overlay1"></div>
+      <div className="content-container">
+        <section className="checkout-section">
+          <div className="checkout-content">
+            <div className="dudes">
+              <Link to={`../`} key="explore">
                 <button type="button" className="backbtn">
                   <img src="./imgg/backbtn.png" alt="" />
                 </button>
-                <div className="checkout-head">
-                  <p>
-                    NFT <span>CHECKOUT</span>
-                  </p>
-                </div>
+              </Link>
+              <div className="checkout-head">
+                <p>
+                  NFT <span>CHECKOUT</span>
+                </p>
               </div>
             </div>
-            <div className="checkout-box">
-              <div className="dudes">
-                <div className="checkout-img line">
-                  <Carousel
-                    autoplay={false}
-                    afterChange={index => setCurrentIndex(index)}
-                  >
-                    {items}
-                  </Carousel>
+          </div>
+          <div className="checkout-box">
+            <div className="dudes">
+              <div className="checkout-img line">
+                <Carousel
+                  autoplay={false}
+                  afterChange={index => setCurrentIndex(index)}
+                >
+                  {items}
+                </Carousel>
 
-                  <div className="checkout-details">
-                    <h1>{art.title || <Skeleton paragraph={{ rows: 0 }} />}</h1>
-                    <ul>
-                      {attributes &&
-                        attributes.map((attribute, index) => (
-                          <li>
-                            {attribute.trait_type} : {attribute.value}
-                          </li>
-                        ))}
-                    </ul>
-                    <p>
-                      {description ||
-                        (winnerCount !== undefined && (
-                          <div style={{ fontStyle: 'italic' }}>
-                            No description provided.
-                          </div>
-                        ))}
-                    </p>
-                    <p className="pb0"></p>
-                    <AuctionBids auctionView={auction} />
-                  </div>
-                </div>
                 <div className="checkout-details">
-                  <div className="token-claim-dude">
-                    <div>
-                      <p className="wallet-head">Select a wallet to proceed</p>
-                      <button>
-                        <span>
-                          <img src="imgg/phantom.png" /> Phantom Wallet
-                        </span>
-                      </button>
-                      <button>
-                        <span>
-                          <img src="imgg/sollet.png" /> Sollet
-                        </span>
-                      </button>
-                      <button>
-                        <span>
-                          <img src="imgg/solflare.png" /> Solflare
-                        </span>
-                      </button>
-                      <p className="para">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                        sed do eiusmod tempor incididunt ut labore et
-                      </p>
-                      <button className="watch-video">
-                        <img src="imgg/video.png" />
-                        &nbsp;<span>Watch Video</span>
-                      </button>
-                    </div>
+                  <h1>{art.title || <Skeleton paragraph={{ rows: 0 }} />}</h1>
+                  <ul>
+                    {attributes &&
+                      attributes.map((attribute, index) => (
+                        <li>
+                          {attribute.trait_type} : {attribute.value}
+                        </li>
+                      ))}
+                  </ul>
+                  <p>
+                    {description ||
+                      (winnerCount !== undefined && (
+                        <div style={{ fontStyle: 'italic' }}>
+                          No description provided.
+                        </div>
+                      ))}
+                  </p>
+                  <p className="pb0"></p>
+                  <AuctionBids auctionView={auction} />
+                </div>
+              </div>
+              <div className="checkout-details">
+                <div className="token-claim-dude">
+                  {!auction && <Skeleton paragraph={{ rows: 6 }} />}
+                  {auction && (
+                    <AuctionCardMetaplex
+                      auctionView={auction}
+                      hideDefaultAction={false}
+                    />
+                  )}
+
+                  <div>
+                    <button className="watch-video">
+                      <img src="imgg/video.png" />
+                      &nbsp;<span>Watch Video</span>
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
-          </section>
-        </div>
-        <div className="right-line liner">
-          <div className="block right-block"></div>
-        </div>
-        {/* </div> */}
-
-        <Row justify="center" ref={ref} gutter={[48, 0]}>
-          <Col span={24} md={10} className={'img-cont-500'}>
-            <div className="auction-view" style={{ minHeight: 300 }}>
-              <Carousel
-                autoplay={false}
-                afterChange={index => setCurrentIndex(index)}
-              >
-                {items}
-              </Carousel>
-            </div>
-            <h6 className={'about-nft-collection'}>
-              ABOUT THIS {nftCount === 1 ? 'NFT' : 'COLLECTION'}
-            </h6>
-            <p className={'about-nft-collection a-description'}>
-              {hasDescription && <Skeleton paragraph={{ rows: 3 }} />}
-              {description ||
-                (winnerCount !== undefined && (
-                  <div style={{ fontStyle: 'italic' }}>
-                    No description provided.
-                  </div>
-                ))}
-            </p>
-            {attributes && (
-              <div className={'about-nft-collection a-attributes'}>
-                <h6>Attributes</h6>
-                <List grid={{ column: 4 }}>
-                  {attributes.map((attribute, index) => (
-                    <List.Item key={`${attribute.value}-${index}`}>
-                      <Card title={attribute.trait_type}>
-                        {attribute.value}
-                      </Card>
-                    </List.Item>
-                  ))}
-                </List>
-              </div>
-            )}
-            {/* {auctionData[id] && (
-            <>
-              <h6>About this Auction</h6>
-              <p>{auctionData[id].description.split('\n').map((t: string) => <div>{t}</div>)}</p>
-            </>
-          )} */}
-          </Col>
-
-          <Col span={24} md={14}>
-            <h2 className="art-title">
-              {art.title || <Skeleton paragraph={{ rows: 0 }} />}
-            </h2>
-            <Row gutter={[44, 0]}>
-              <Col span={12} md={16}>
-                <div className={'info-container'}>
-                  <div className={'info-component'}>
-                    <h6 className={'info-title'}>CREATED BY</h6>
-                    <span>{<MetaAvatar creators={creators} />}</span>
-                  </div>
-                  <div className={'info-component'}>
-                    <h6 className={'info-title'}>Edition</h6>
-                    <span>
-                      {(auction?.items.length || 0) > 1 ? 'Multiple' : edition}
-                    </span>
-                  </div>
-                  <div className={'info-component'}>
-                    <h6 className={'info-title'}>Winners</h6>
-                    <span>
-                      {winnerCount === undefined ? (
-                        <Skeleton paragraph={{ rows: 0 }} />
-                      ) : isOpen ? (
-                        'Unlimited'
-                      ) : (
-                        winnerCount
-                      )}
-                    </span>
-                  </div>
-                  <div className={'info-component'}>
-                    <h6 className={'info-title'}>NFTS</h6>
-                    <span>
-                      {nftCount === undefined ? (
-                        <Skeleton paragraph={{ rows: 0 }} />
-                      ) : isOpen ? (
-                        'Open'
-                      ) : (
-                        nftCount
-                      )}
-                    </span>
-                  </div>
-                  <div className={'info-component'}>
-                    <h6 className={'info-title'}>CURRENCY</h6>
-                    <span>
-                      {nftCount === undefined ? (
-                        <Skeleton paragraph={{ rows: 0 }} />
-                      ) : (
-                        `${tokenInfo?.name || 'Custom Token'} ($${
-                          tokenInfo?.symbol || 'CUSTOM'
-                        })`
-                      )}
-                      <ClickToCopy
-                        className="copy-pubkey"
-                        copyText={
-                          tokenInfo
-                            ? tokenInfo?.address
-                            : auction?.auction.info.tokenMint || ''
-                        }
-                      />
-                    </span>
-                  </div>
-                </div>
-              </Col>
-              <Col span={12} md={8} className="view-on-container">
-                <div className="info-view-container">
-                  <div className="info-view">
-                    <h6 className="info-title">View on</h6>
-                    <div style={{ display: 'flex' }}>
-                      <Button
-                        className="tag"
-                        onClick={() => window.open(art.uri || '', '_blank')}
-                      >
-                        Arweave
-                      </Button>
-                      <Button
-                        className="tag"
-                        onClick={() => {
-                          const cluster = endpoint.name;
-                          const explorerURL = new URL(
-                            `account/${art?.mint || ''}`,
-                            'https://explorer.solana.com',
-                          );
-                          if (!cluster.includes('mainnet')) {
-                            explorerURL.searchParams.set('cluster', cluster);
-                          }
-                          window.open(explorerURL.href, '_blank');
-                        }}
-                      >
-                        Solana
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </Col>
-            </Row>
-
-            {!auction && <Skeleton paragraph={{ rows: 6 }} />}
-            {auction && (
-              <AuctionCard auctionView={auction} hideDefaultAction={false} />
-            )}
-            <AuctionBids auctionView={auction} />
-          </Col>
-        </Row>
+          </div>
+        </section>
       </div>
-    );
-  }
+      <div className="right-line liner">
+        <div className="block right-block"></div>
+      </div>
+    </div>
+  );
 };
 
 const BidLine = (props: {

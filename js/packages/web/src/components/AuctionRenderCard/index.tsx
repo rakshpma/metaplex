@@ -42,7 +42,7 @@ export const AuctionRenderCard = (props: AuctionCard) => {
   const { status, amount } = useAuctionStatus(auctionView);
 
   const card = (
-    <div className="dudes">
+    <div className="dudes" ref={ref}>
       <div className="nft-img">
         <ArtContent
           className="auction-image no-events"
